@@ -9,7 +9,7 @@ Live: https://hirehiv.github.io/llm-price-index/
 ## API
 
 <!-- api:start -->
-- 8,449 priced provider+model rows across 226 providers (data 2026-11-09, built 2026-11-09T13:49:42Z).
+- 8,449 priced provider+model rows across 226 providers (data 2026-11-09, built 2026-11-09T14:29:00Z).
 - [`api/models.json`](api/models.json) — one row per provider+model.
 - [`api/providers.json`](api/providers.json) — provider summaries.
 - Docs and schema: [`docs/api/`](docs/api/index.html).

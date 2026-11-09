@@ -8,6 +8,7 @@ import re
 
 import build_api
 import build_providers
+import build_seo
 import catalog
 import generate
 
@@ -59,6 +60,7 @@ def main():
 
     build_api.build(rows, meta, slugs, page_slugs)
     build_providers.build(rows, meta, slugs)
+    build_seo.write(meta, page_slugs)
     update_readme(meta, len(page_slugs))
 
 

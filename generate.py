@@ -10,6 +10,7 @@ provider+model, because the same model is often cheaper at a different provider.
 import html
 import os
 
+import build_seo
 import catalog
 
 OUT = catalog.ROOT
@@ -63,9 +64,20 @@ def render(rows, meta, slugs, page_slugs):
     import json
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
 
+    description = ("Compare published prices for %s LLM models across %s providers. "
+                   "Input, output and blended cost per 1M tokens, with a cost calculator."
+                   % (format(count, ","), providers))
+    seo = "\n".join([
+        build_seo.canonical(""),
+        build_seo.META_ROBOTS,
+        build_seo.jsonld(build_seo.website_node(description),
+                         build_seo.dataset_node(meta)),
+    ])
+
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LLM Price Index — cost per million tokens</title>
-<meta name="description" content="Compare published prices for {count:,} LLM models across {providers} providers. Input, output and blended cost per 1M tokens, with a cost calculator.">
+<meta name="description" content="{description}">
+{seo}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">

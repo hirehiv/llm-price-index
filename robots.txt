@@ -1,0 +1,5 @@
+# https://hirehiv.github.io/llm-price-index/
+User-agent: *
+Allow: /
+
+Sitemap: https://hirehiv.github.io/llm-price-index/sitemap.xml

@@ -3,6 +3,7 @@
 import html
 import os
 
+import build_seo
 import catalog
 
 PROVIDERS_DIR = os.path.join(catalog.ROOT, "providers")
@@ -18,10 +19,13 @@ def _range(lo, hi):
     return _price(lo) if lo == hi else "%s – %s" % (_price(lo), _price(hi))
 
 
-def _head(title, description, root, data_date):
+def _head(title, description, root, data_date, path, nodes):
+    seo = "\n".join([build_seo.canonical(path), build_seo.META_ROBOTS,
+                     build_seo.jsonld(*nodes)])
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
+{seo}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}assets/site.css">
@@ -64,7 +68,10 @@ def render_provider(entry, rows, meta):
                    (name, format(count, ","), _price(entry["input_min"]), _price(entry["input_max"])))
 
     return (
-        _head(title, description, "../../", data_date)
+        _head(title, description, "../../", data_date,
+              "providers/%s/" % entry["slug"],
+              [build_seo.webpage_node("providers/%s/" % entry["slug"],
+                                      title, description, data_date)])
         + f"""
 <div class="crumbs"><a href="../../">Home</a> / <a href="../">Providers</a> / {html.escape(name)}</div>
 <section class="hero">
@@ -106,10 +113,12 @@ def render_index(entries, meta):
                 out=_range(entry["output_min"], entry["output_max"]),
                 blend=_price(entry["cheapest_blended"]),
             ))
+    title = "Providers — LLM Price Index"
+    description = ("Model counts and price ranges for the 20 providers with the most "
+                   "priced models.")
     return (
-        _head("Providers — LLM Price Index",
-              "Model counts and price ranges for the 20 providers with the most priced models.",
-              "../", data_date)
+        _head(title, description, "../", data_date, "providers/",
+              [build_seo.webpage_node("providers/", title, description, data_date)])
         + f"""
 <div class="crumbs"><a href="../">Home</a> / Providers</div>
 <section class="hero">

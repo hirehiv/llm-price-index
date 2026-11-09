@@ -4,6 +4,7 @@ import html
 import json
 import os
 
+import build_seo
 import catalog
 
 API_DIR = os.path.join(catalog.ROOT, "api")
@@ -91,9 +92,20 @@ def render_docs(meta, models, providers):
         indent=2, ensure_ascii=False)
     model_count_sample = len(models)
 
+    title = "JSON API — LLM Price Index"
+    description = ("Free static JSON API for %s LLM model prices across %s providers: "
+                   "input, output and blended cost per 1M tokens."
+                   % (format(count, ","), provider_count))
+    seo = "\n".join([
+        build_seo.canonical("docs/api/"),
+        build_seo.META_ROBOTS,
+        build_seo.jsonld(build_seo.webpage_node("docs/api/", title, description, data_date)),
+    ])
+
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>JSON API — LLM Price Index</title>
-<meta name="description" content="Free static JSON API for {count:,} LLM model prices across {provider_count} providers: input, output and blended cost per 1M tokens.">
+<meta name="description" content="{description}">
+{seo}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/site.css">
