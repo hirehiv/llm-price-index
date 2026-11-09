@@ -1,0 +1,112 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON API — LLM Price Index</title>
+<meta name="description" content="Free static JSON API for 8,449 LLM model prices across 226 providers: input, output and blended cost per 1M tokens.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head><body>
+<header><div class="wrap bar"><a class="brand" href="../../"><span class="mark">$</span>LLM Price Index</a><nav><a href="../../">Compare</a><a href="../../providers/">Providers</a><a href="./">API</a></nav><div class="spacer"></div><span class="tag">data 2026-11-09</span></div></header>
+<div class="wrap">
+<div class="crumbs"><a href="../../">Home</a> / API</div>
+<section class="hero">
+ <div class="eyebrow">Static JSON · no auth · CORS enabled</div>
+ <h1>JSON API</h1>
+ <p class="lede">The same dataset that powers the index, as two static JSON files. No key, no rate limit, no signup. Prices are USD list rates per 1M tokens.</p>
+</section>
+<section class="main prose">
+ <table class="kv"><tbody>
+   <tr><td>models.json</td><td>GET</td><td><a href="../../api/models.json">../../api/models.json</a> — 8,449 provider+model rows</td></tr>
+   <tr><td>providers.json</td><td>GET</td><td><a href="../../api/providers.json">../../api/providers.json</a> — 226 provider summaries</td></tr>
+   <tr><td>generated_at</td><td>meta</td><td>2026-11-09T13:49:42Z</td></tr>
+   <tr><td>source</td><td>meta</td><td>models.dev catalog, cache modified 2026-11-09T13:41:16Z</td></tr>
+ </tbody></table>
+
+ <div class="section-h">Example</div>
+ <pre>curl -s https://hirehiv.github.io/llm-price-index/api/models.json | jq '.counts'</pre>
+ <pre>{"models":8449,"providers":226}</pre>
+
+ <div class="section-h">Envelope (both files)</div>
+ <table class="kv"><tbody>
+   <tr><td>generated_at</td><td>string (ISO 8601 UTC)</td><td>Build time of this file.</td></tr>
+   <tr><td>source.name</td><td>string</td><td>Upstream catalog, currently <code>models.dev</code>.</td></tr>
+   <tr><td>source.url</td><td>string</td><td>Upstream site.</td></tr>
+   <tr><td>source.cache_file</td><td>string</td><td>Cache filename the build read.</td></tr>
+   <tr><td>source.cache_modified</td><td>string (ISO 8601 UTC)</td><td>When the upstream cache was last refreshed — this is the data date.</td></tr>
+   <tr><td>counts.models</td><td>integer</td><td>Priced provider+model rows in the file.</td></tr>
+   <tr><td>counts.providers</td><td>integer</td><td>Providers with at least one priced model.</td></tr>
+   <tr><td>currency</td><td>string</td><td>Always <code>USD</code>.</td></tr>
+   <tr><td>unit</td><td>string</td><td>Always <code>per 1M tokens</code>.</td></tr>
+   <tr><td>blended_formula</td><td>string</td><td><code>(3 * input + output) / 4</code>.</td></tr>
+   <tr><td>site</td><td>string</td><td>Public site root.</td></tr>
+ </tbody></table>
+
+ <div class="section-h">models.json — array item</div>
+ <table class="kv"><tbody>
+   <tr><td>id</td><td>string</td><td><code>{provider_id}/{model_id}</code>, unique per row.</td></tr>
+   <tr><td>name</td><td>string</td><td>Display name as published by the provider.</td></tr>
+   <tr><td>model_id</td><td>string</td><td>Upstream model id.</td></tr>
+   <tr><td>provider_id</td><td>string</td><td>Upstream provider id.</td></tr>
+   <tr><td>provider</td><td>string</td><td>Provider display name.</td></tr>
+   <tr><td>provider_slug</td><td>string</td><td>Stable slug used in provider page URLs.</td></tr>
+   <tr><td>input_per_1m</td><td>number</td><td>USD per 1M input tokens. <code>0</code> means free.</td></tr>
+   <tr><td>output_per_1m</td><td>number</td><td>USD per 1M output tokens.</td></tr>
+   <tr><td>blended_per_1m</td><td>number</td><td><code>(3*input + output) / 4</code>, rounded to 4dp.</td></tr>
+   <tr><td>context_window</td><td>integer</td><td>Context limit in tokens.</td></tr>
+   <tr><td>family</td><td>string</td><td>Model family, may be empty.</td></tr>
+   <tr><td>release_date</td><td>string</td><td><code>YYYY-MM-DD</code>, may be empty.</td></tr>
+ </tbody></table>
+ <pre>{
+  &quot;id&quot;: &quot;edenai/greenference/gpt-oss-20b&quot;,
+  &quot;name&quot;: &quot;GPT OSS 20B (Greenference)&quot;,
+  &quot;model_id&quot;: &quot;greenference/gpt-oss-20b&quot;,
+  &quot;provider_id&quot;: &quot;edenai&quot;,
+  &quot;provider&quot;: &quot;Eden AI&quot;,
+  &quot;provider_slug&quot;: &quot;eden-ai&quot;,
+  &quot;input_per_1m&quot;: 0.009,
+  &quot;output_per_1m&quot;: 0.045,
+  &quot;blended_per_1m&quot;: 0.018,
+  &quot;context_window&quot;: 131072,
+  &quot;family&quot;: &quot;gpt-oss&quot;,
+  &quot;release_date&quot;: &quot;2025-08-05&quot;
+}</pre>
+ <p style="font-size:12px;color:var(--muted)">One object shown. The live file has 8,449.</p>
+
+ <div class="section-h">providers.json — array item</div>
+ <table class="kv"><tbody>
+   <tr><td>id / name / slug</td><td>string</td><td>Provider identity; slug is used in <code>providers/&lt;slug&gt;/</code>.</td></tr>
+   <tr><td>model_count</td><td>integer</td><td>Priced models for this provider.</td></tr>
+   <tr><td>free_models</td><td>integer</td><td>Rows with both input and output at 0.</td></tr>
+   <tr><td>input_min_per_1m …</td><td>number</td><td>Min/max input, output and blended price across its models.</td></tr>
+   <tr><td>cheapest_model</td><td>string</td><td>Lowest blended price; ties resolved by name.</td></tr>
+   <tr><td>cheapest_blended_per_1m</td><td>number</td><td>That model's blended price.</td></tr>
+   <tr><td>page</td><td>string or null</td><td>Relative page path when a provider page is generated (top 20 by model count), else <code>null</code>.</td></tr>
+ </tbody></table>
+ <pre>{
+  &quot;id&quot;: &quot;nano-gpt&quot;,
+  &quot;name&quot;: &quot;NanoGPT&quot;,
+  &quot;slug&quot;: &quot;nanogpt&quot;,
+  &quot;model_count&quot;: 639,
+  &quot;free_models&quot;: 2,
+  &quot;input_min_per_1m&quot;: 0.0,
+  &quot;input_max_per_1m&quot;: 150.0,
+  &quot;output_min_per_1m&quot;: 0.0,
+  &quot;output_max_per_1m&quot;: 600.0,
+  &quot;blended_min_per_1m&quot;: 0.0,
+  &quot;blended_max_per_1m&quot;: 262.5,
+  &quot;cheapest_model&quot;: &quot;Auto model&quot;,
+  &quot;cheapest_blended_per_1m&quot;: 0.0,
+  &quot;page&quot;: &quot;nanogpt/&quot;
+}</pre>
+
+ <div class="section-h">Notes</div>
+ <ul>
+   <li>Only text-in/text-out models with a published input and output price and a context limit are included.</li>
+   <li>One row per provider+model: the same model can appear under several providers at different prices.</li>
+   <li>Responses are cached by GitHub Pages; <code>Access-Control-Allow-Origin: *</code> is set, so browser fetches work.</li>
+   <li>Field names are stable. Counts, prices and <code>generated_at</code> change on every rebuild.</li>
+   <li>Prices are published list rates. Providers change them; verify before committing volume.</li>
+   <li>Upstream: <a href="https://models.dev">models.dev</a>. This index is independent and takes no placement fees.</li>
+ </ul>
+ <div class="foot"><b>LLM Price Index</b> · <a href="../../">Compare prices</a> · <a href="../../providers/">Providers</a></div>
+</section>
+</div></body></html>
